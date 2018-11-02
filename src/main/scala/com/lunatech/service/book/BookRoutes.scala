@@ -80,39 +80,9 @@ class BookRoutes(val bookService: BookService) extends Routes {
         }
       }
 
-    def getBooks: Route =
-      get {
-        parameters('q.?, 'createdBefore.?, 'genre ? "all", 'view ? BookCompact.view) {
-          (title, createdBefore, genre, view) =>
-            BooksEndpointView.parse(view) match {
-              case Some(BookNormal) =>
-                onComplete(bookService.getBooksNormal(title, createdBefore.map(ca => new Timestamp(ca.toLong)), BookGenreEndpointView.parse(genre))) {
-                  case Success(future) =>
-                    completeEither(StatusCodes.OK, future)
-                  case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
-                }
-              case Some(BookCompact) =>
-                onComplete(bookService.getBooksCompact(title, createdBefore.map(ca => new Timestamp(ca.toLong)), BookGenreEndpointView.parse(genre))) {
-                  case Success(future) =>
-                    completeEither(StatusCodes.OK, future)
-                  case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
-                }
-              case _ =>
-                val error = ServiceError.httpErrorMapper(ViewIsNotDefined(view))
-                complete(StatusCodes.BadRequest, ErrorResponse(code = error.code, message = error.message))
-            }
-        }
-      }
+    def getBooks: Route = ???
 
-    def getBook(bookId: UUID): Route =
-      get(
-        onComplete(bookService.getBook(bookId)) {
-          case Success(future) =>
-            completeEither(StatusCodes.OK, future)
-          case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
-        }
-      )
-
+    def getBook(bookId: UUID): Route = ???
   }
 
 }
