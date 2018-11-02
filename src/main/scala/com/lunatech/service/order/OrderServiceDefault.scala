@@ -1,22 +1,27 @@
 package com.lunatech.service.order
 
+import java.util.UUID
+
+import com.lunatech.errors.DatabaseError
 import com.lunatech.service.order.persistence.OrderPersistence
+
+import scala.concurrent.Future
 
 
 class OrderServiceDefault(val orderPersistence: OrderPersistence) extends OrderService {
 
-  def getOrder(orderId: Int): Either[Error, Order] = ???
+  def getOrder(orderId: UUID): Future[Either[DatabaseError, Order]] = ???
 
-  def createOrder: Either[Error, Order] = ???
+  def createOrder: Future[Either[DatabaseError, Order]] = ???
 
-  def cancelOrder: Either[Error, Order] = ???
+  def cancelOrder: Future[Either[DatabaseError, Order]] = ???
 
-  def editOrder: Either[Error, Order] = ???
+  def editOrder: Future[Either[DatabaseError, Order]] = ???
 
-  def updateStatusOfOrder(): Either[Error, Order] = ???
+  def updateStatusOfOrder(): Future[Either[DatabaseError, Order]] = ???
 
-  def listOfOrdersOfUser(userId: Int): Either[Error, List[Order]] = ???
+  def listOfOrdersOfUser(userId: Int): Future[Either[DatabaseError, List[Order]]] = ???
 
-  def listOrders: Either[Error, List[Order]] = ???
+  def listOrders: Future[Either[DatabaseError, List[Order]]] = ???
 
 }
