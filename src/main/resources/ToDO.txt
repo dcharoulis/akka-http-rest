@@ -1,0 +1,22 @@
+todo
+
+-- 1) I should implement a new API with database, orders, users, etc.
+2) The user should not be able to retrieve all orders
+3) I should return proper error coded when the user doesn't have access to a specific resource. Like 401
+4) I should also have questions mark in case of not implemented methods and leave the student to fill these information, the Error responses
+
+5) Should give some questionnaire to the participants after the workshop
+
+6) Make integration tests and make the to pass. Expect smth with mock server
+7) Make a PUT to update the whole resource and find the mistake. Make it run
+
+8) Define a endpoint in the mock-server and return bad gateway error
+10) How to update properly? SLICK
+-- 11) The database object should be different from the Rest API objects
+12) Should mention the Security of Manos <------
+-- 14) Do not pass the DB id outside
+16) scala folder in integration test should be as code folder
+-- 17) Store the H2 file
+
+
+Validation everywhere
