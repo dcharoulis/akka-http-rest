@@ -19,7 +19,7 @@ trait OrderService {
 
   def updateStatusOfOrder(): Future[Either[DatabaseError, Order]]
 
-  def listOfOrdersOfUser(userId: Int): Future[Either[DatabaseError, List[Order]]]
+  def listOfOrdersOfUser(userId: UUID): Future[Either[DatabaseError, List[Order]]]
 
   def listOrders: Future[Either[DatabaseError, List[Order]]]
 
