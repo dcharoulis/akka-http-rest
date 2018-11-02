@@ -8,12 +8,9 @@ import scala.concurrent.Future
 
 trait UserService {
 
-  //  def getUsers: Future[List[UserDto]]
   def getUsers: Future[Either[DatabaseError, List[UserDto]]]
 
   def getUser(userId: UUID): Future[Either[DatabaseError, UserDto]]
-
-  //  def createUser(userCreate: UserCreate): Future[UserDto]
 
   def createUser(userCreate: UserCreate): Future[Either[DatabaseError, UserDto]]
 

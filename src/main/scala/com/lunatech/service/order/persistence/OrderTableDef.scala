@@ -26,9 +26,7 @@ trait OrderTableDef {
     def deliveryAddress: Rep[String] = column[String]("delivery_address")
 
     def comments: Rep[String] = column[String]("comments")
-
-    //    def products: Rep[Seq[Int]] = column[Seq[Int]]("products")
-
+    
     def * : ProvenShape[Order] = (
       id,
       orderId,
