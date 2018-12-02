@@ -36,8 +36,8 @@ class AuthRoutes(val authService: AuthService) extends Routes {
       implicit mapper: ErrorMapper[E, HttpError]
     ): Route = {
       either match {
+        case Right(value) => complete(statusCode, value)
         case Left(value) => complete(value.statusCode, ErrorResponse(code = value.code, message = value.message))
-        case Right(value) => complete(value)
       }
     }
 

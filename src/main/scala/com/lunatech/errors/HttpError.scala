@@ -17,7 +17,7 @@ case class UnauthorizedErrorHttp() extends HttpError {
 
 case class EmailAlreadyExistsHttp(email: String) extends HttpError {
   val statusCode: StatusCode = Conflict
-  override val code: String = "emailAlreadyExists"
+  override val code: String = "EmailAlreadyExists"
   override val message: String = s"The email $email already exists."
 }
 
@@ -45,19 +45,20 @@ case class InternalErrorHttp(message: String) extends HttpError {
 
 case object DefaultNotFoundErrorHttp extends HttpError {
   override val statusCode: StatusCode = NotFound
-  override val code = "DefaultNotFoundErrorHttp"
+  override val code = "DefaultNotFoundError"
   override val message = "Can't find requested asset"
 }
 
 case class RecordAlreadyExistsHttp(message: String) extends HttpError {
   override val statusCode: StatusCode = Conflict
-  override val code = "RecordAlreadyExistsHttp"
+  override val code = "RecordAlreadyExists"
 }
 
-//case class NotFoundError(message: String) {
-//  val statusCode: StatusCode = NotFound
-//  val code: String = "malformedRequestError"
-//}
+case class InputValidationError(errors: List[String]) extends HttpError {
+  val statusCode: StatusCode = BadRequest
+  val code: String = "malformedRequestError"
+  val message: String = errors.toString()
+}
 
 trait NotFoundError extends HttpError {
   val statusCode: StatusCode = NotFound

@@ -2,6 +2,8 @@ package com.lunatech.service.bookstore
 
 import java.util.UUID
 
+import scala.language.implicitConversions
+
 case class Bookstore(id: Option[Int] = None, bookstoreId: UUID, name: String, location: String)
 
 case class BookstoreDto(bookstoreId: UUID, name: String, location: String)

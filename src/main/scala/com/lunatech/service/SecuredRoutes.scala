@@ -15,6 +15,7 @@ trait SecuredRoutes extends FailFastCirceSupport {
     ("foo", Json.fromString(a.code)),
     ("bar", Json.fromString(a.message))
   )
+
   case class Claims(userId: String, issuedAt: Long)
 
   def authenticated: Directive1[Map[String, Any]] = {

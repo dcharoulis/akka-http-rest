@@ -27,4 +27,5 @@ trait BookPersistence {
 
   def updateBookstoreBook(bookstoreId: UUID, bookstoreBookDto: BookstoreBookDto): Future[Either[DatabaseError, Int]]
 
+  def deleteAllBooks: Future[Either[DatabaseError, Boolean]]
 }

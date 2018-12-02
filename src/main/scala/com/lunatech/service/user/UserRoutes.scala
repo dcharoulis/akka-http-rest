@@ -5,6 +5,7 @@ import java.util.UUID
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Route
+import cats.data.Validated
 import com.lunatech.errors._
 import com.lunatech.service.Routes
 import io.circe.generic.auto._
@@ -29,14 +30,14 @@ class UserRoutes(val userService: UserService) extends Routes {
         case Right(value) => Right(value)
       }
     }
-    
+
     def completeEither[E <: ServiceError, R: ToEntityMarshaller]
     (statusCode: StatusCode, either: => Either[E, R])(
       implicit mapper: ErrorMapper[E, HttpError]
     ): Route = {
       either match {
+        case Right(value) => complete(statusCode, value)
         case Left(value) => complete(value.statusCode, ErrorResponse(code = value.code, message = value.message))
-        case Right(value) => complete(value)
       }
     }
 
@@ -51,21 +52,36 @@ class UserRoutes(val userService: UserService) extends Routes {
         userActions ~ getUsers ~ postUser
       }
 
-    def getUsers: Route =
+    def getUsers: Route = {
       get(
         onComplete(userService.getUsers) {
-          case Success(future) =>
-            completeEither(StatusCodes.OK, future)
+          case Success(future) => completeEither(StatusCodes.OK, future)
           case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
         }
       )
+    }
+
+    //    //    def validate[A](a: A): A = {
+    //    def validate(userCreate: UserCreate): UserCreate = {
+    //      UserRegisterValidator.validateForm(userCreate) match {
+    //        case Validated.Valid(a) => a
+    //        case Validated.Invalid(e) =>
+    //          complete((StatusCodes.InternalServerError, s"An error occurred"))
+    //      }
+    //    }
 
     def postUser: Route =
       post {
         entity(as[UserCreate]) { userCreate =>
+
+          userCreate.validate(userCreate) match {
+            case Validated.Invalid(e) => println("Invalid")
+              complete((StatusCodes.InternalServerError, s"An error occurred: $e"))
+            case Validated.Valid(a) =>
+          }
+
           onComplete(userService.createUser(userCreate)) {
-            case Success(future) =>
-              completeEither(StatusCodes.Created, future)
+            case Success(future) => completeEither(StatusCodes.Created, future)
             case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
           }
         }
@@ -80,8 +96,7 @@ class UserRoutes(val userService: UserService) extends Routes {
     def getUser(userId: UUID): Route =
       get(
         onComplete(userService.getUser(userId)) {
-          case Success(future) =>
-            completeEither(StatusCodes.OK, future)
+          case Success(future) => completeEither(StatusCodes.OK, future)
           case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
         }
       )
@@ -90,8 +105,7 @@ class UserRoutes(val userService: UserService) extends Routes {
       put {
         entity(as[UpdateUser]) { updateUser =>
           onComplete(userService.updateUser(userId, updateUser)) {
-            case Success(future) =>
-              completeEither(StatusCodes.OK, future)
+            case Success(future) => completeEither(StatusCodes.OK, future)
             case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
           }
         }
@@ -101,8 +115,7 @@ class UserRoutes(val userService: UserService) extends Routes {
       patch {
         entity(as[UpdateUser]) { updateUser =>
           onComplete(userService.updateUser(userId, updateUser)) {
-            case Success(future) =>
-              completeEither(StatusCodes.OK, future)
+            case Success(future) => completeEither(StatusCodes.OK, future)
             case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
           }
         }
@@ -111,8 +124,7 @@ class UserRoutes(val userService: UserService) extends Routes {
     def deleteUser(userId: UUID): Route =
       delete {
         onComplete(userService.deleteUser(userId)) {
-          case Success(future) =>
-            completeEither(StatusCodes.NoContent, future)
+          case Success(future) => completeEither(StatusCodes.NoContent, future)
           case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
         }
       }

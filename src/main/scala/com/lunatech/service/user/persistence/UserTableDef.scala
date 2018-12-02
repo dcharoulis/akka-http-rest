@@ -36,7 +36,6 @@ trait UserTableDef {
       lastName,
       balance
     ) <> ((User.apply _).tupled, User.unapply)
-    //    ) <>(User.tupled, User.unapply)
   }
 
   //  def fkAuthor = foreignKey("fk_author_id", authorId, Tables.authors)(_.id, onDelete = ForeignKeyAction.Cascade)

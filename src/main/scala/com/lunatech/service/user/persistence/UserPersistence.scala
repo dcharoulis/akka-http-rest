@@ -24,4 +24,6 @@ trait UserPersistence {
 
   def loginUser(email: String, password: String): Future[Either[DatabaseError, User]]
 
+  def deleteAllUsers: Future[Either[DatabaseError, Boolean]]
+
 }

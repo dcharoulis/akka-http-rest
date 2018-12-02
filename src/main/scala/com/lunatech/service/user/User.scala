@@ -2,7 +2,9 @@ package com.lunatech.service.user
 
 import java.util.UUID
 
-import scala.language.higherKinds
+import com.lunatech.utils.validators.{InputValidators, ObjectsValidators}
+
+import scala.language.{higherKinds, implicitConversions}
 
 case class Usr[F[_]](id: Option[Int],
                      userId: F[UUID],
@@ -57,7 +59,6 @@ case class UserDto(userId: UUID,
                    balance: BigDecimal)
 
 object UserDto {
-
   implicit def userToUserDto(user: User): UserDto = {
     UserDto(user.userId, user.email, user.firstName, user.lastName, user.balance)
   }
@@ -70,4 +71,8 @@ case class UserLoginDto(accessToken: String, refreshToken: String, expiresIn: In
 case class UserCreate(email: String,
                       firstName: String,
                       lastName: String,
-                      password: String)
+                      password: String) {
+  implicit def validate(userCreate: UserCreate): InputValidators.ValidationResult[UserCreate] = {
+    ObjectsValidators.validateUserCreate(userCreate)
+  }
+}

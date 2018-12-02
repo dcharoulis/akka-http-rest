@@ -1,7 +1,7 @@
 package com.lunatech.service
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import com.lunatech.service.auth.{AuthService, AuthServiceDefault}
 import com.lunatech.service.book.persistence.BookPersistenceSQL
 import com.lunatech.service.book.{BookService, BookServiceDefault}
@@ -24,7 +24,7 @@ case class Dependencies(
 
 object Dependencies {
 
-  def fromConfig(configuration: Configuration)(implicit system: ActorSystem, mat: ActorMaterializer): Dependencies = {
+  def fromConfig(configuration: Configuration)(implicit system: ActorSystem, mat: Materializer): Dependencies = {
 
     val dbAccess = DBAccess(system)
 
