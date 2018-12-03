@@ -57,15 +57,15 @@ class UserRoutesIT extends ServiceSuite {
     }
 
     "successfully validated an invalid user" in new Fixture {
-      val user = UserCreate("pkont@gmail.com", "pas132!swordP", "Pe#@#-tros", "Kontogiannis")
+      val user = UserCreate("pkontgmail.com", "nothingfancy", "Petros", "Kontogiannis")
       Post("/v01/users", user) ~> userRoutes ~> check {
         handled shouldBe true
         //        status should ===(StatusCodes.Created)
         val resultUser = responseAs[ErrorResponse]
         println(resultUser)
-        //        assert(
-        //          resultUser.email === expectedUser.email
-        //        )
+        assert(
+          resultUser.message === "EmailHasSpecialCharacters, PasswordDoesNotMeetCriteria"
+        )
       }
     }
 

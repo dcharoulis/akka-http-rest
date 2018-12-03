@@ -72,7 +72,8 @@ case class UserCreate(email: String,
                       firstName: String,
                       lastName: String,
                       password: String) {
-  implicit def validate(userCreate: UserCreate): InputValidators.ValidationResult[UserCreate] = {
-    ObjectsValidators.validateUserCreate(userCreate)
-  }
+
+  def validate: InputValidators.ValidationResult[UserCreate] =
+    ObjectsValidators.validateUserCreate(this)
+
 }

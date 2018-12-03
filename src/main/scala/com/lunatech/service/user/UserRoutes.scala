@@ -5,15 +5,18 @@ import java.util.UUID
 import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Route
-import cats.data.Validated
+import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
+import cats.data.Validated.{Invalid, Valid}
 import com.lunatech.errors._
 import com.lunatech.service.Routes
+import com.lunatech.utils.validators.InputValidators.ValidationResult
 import io.circe.generic.auto._
 import io.circe.syntax._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+
 
 class UserRoutes(val userService: UserService) extends Routes {
 
@@ -61,28 +64,47 @@ class UserRoutes(val userService: UserService) extends Routes {
       )
     }
 
-    //    //    def validate[A](a: A): A = {
-    //    def validate(userCreate: UserCreate): UserCreate = {
-    //      UserRegisterValidator.validateForm(userCreate) match {
-    //        case Validated.Valid(a) => a
-    //        case Validated.Invalid(e) =>
-    //          complete((StatusCodes.InternalServerError, s"An error occurred"))
-    //      }
-    //    }
+    def validated[T](validator: T => ValidationResult[T])(implicit um: FromRequestUnmarshaller[T]): FromRequestUnmarshaller[T] =
+      um.flatMap { implicit ec =>
+        implicit mat =>
+          t =>
+            validator(t).fold(
+              errors => Future.failed(new RuntimeException(errors.toNonEmptyList.toList.mkString(", "))),
+              t => Future.successful(t)
+            )
+      }
+
+    def completeVEither[E <: ServiceError, R: ToEntityMarshaller]
+    (statusCode: StatusCode, either: => ValidationResult[Future[Either[E, R]]])(
+      implicit mapper: ErrorMapper[E, HttpError]
+    ): Route = {
+      either match {
+        case Invalid(e) =>
+          complete(StatusCodes.BadRequest, ErrorResponse(code = "InvalidData", message = e.toNonEmptyList.toList.mkString(", ")))
+        case Valid(futureEither) =>
+          onComplete(futureEither) {
+            case Failure(ex) =>
+              complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
+            case Success(Right(r)) =>
+              complete(StatusCodes.Created, r)
+            case Success(Left(value)) =>
+              complete(value.statusCode, ErrorResponse(code = value.code, message = value.message))
+          }
+      }
+    }
 
     def postUser: Route =
       post {
         entity(as[UserCreate]) { userCreate =>
-
-          userCreate.validate(userCreate) match {
-            case Validated.Invalid(e) => println("Invalid")
-              complete((StatusCodes.InternalServerError, s"An error occurred: $e"))
-            case Validated.Valid(a) =>
-          }
-
-          onComplete(userService.createUser(userCreate)) {
-            case Success(future) => completeEither(StatusCodes.Created, future)
-            case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
+          userCreate.validate match {
+            case Valid(validatedUserCreate) => onComplete(userService.createUser(validatedUserCreate)) {
+              case Success(future) => completeEither(StatusCodes.Created, future)
+              case Failure(ex) => complete((StatusCodes.InternalServerError, s"An error occurred: ${ex.getMessage}"))
+            }
+            case Invalid(e) =>
+              complete(StatusCodes.BadRequest, ErrorResponse(code = "InvalidData",
+                message = e.toNonEmptyList.toList
+                  .mkString(", ")))
           }
         }
       }
