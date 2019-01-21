@@ -26,7 +26,6 @@ case class DBAccess(actorSystem: ActorSystem) extends Schema {
   private val existing: Future[Vector[MTable]] = db.run(MTable.getTables)
   private val f = existing.flatMap(v => {
     val names = v.map(mt => mt.name.name)
-    println(names)
     val createIfNotExist = tables.filter(table =>
       !names.contains(table.baseTableRow.tableName)).map(_.schema.create)
     db.run(DBIO.sequence(createIfNotExist))

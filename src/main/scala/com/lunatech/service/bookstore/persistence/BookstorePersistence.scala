@@ -15,4 +15,6 @@ trait BookstorePersistence {
 
   def getBookstores: Future[Either[DatabaseError, Seq[Bookstore]]]
 
+  def deleteAllBooks: Future[Either[DatabaseError, Boolean]]
+
 }

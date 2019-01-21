@@ -28,7 +28,6 @@ class UserPersistenceSQL(val dbAccess: DBAccess) extends UserPersistence {
   }
 
   def createUser(data: UserCreate): Future[Either[DatabaseError, User]] = {
-    //  def createUser(data: UserCreate): Future[User] = {
     val userRow = User(userId = UUID.randomUUID(),
       email = data.email, password = data.password,
       firstName = data.firstName, lastName = data.lastName, balance = 0)
@@ -154,7 +153,6 @@ class UserPersistenceSQL(val dbAccess: DBAccess) extends UserPersistence {
   private def getUserOf(userId: UUID): UserSelection =
     Users.filter(_.userId === userId)
 
-
   def testUser: Future[Either[OrderNotFound, Option[UserDto]]] = {
     val use: Future[Option[User]] = db.run(
       Users.filter(_.id === 12).result.headOption
@@ -165,4 +163,13 @@ class UserPersistenceSQL(val dbAccess: DBAccess) extends UserPersistence {
     }
   }
 
+  def deleteAllUsers: Future[Either[DatabaseError, Boolean]] = {
+    db.run(Users.delete).transformWith {
+      case Success(res) => res match {
+        case 0 => Future.successful(Right(false))
+        case 1 => Future.successful(Right(true))
+      }
+      case Failure(_) => Future.successful(Left(GenericDatabaseError))
+    }
+  }
 }

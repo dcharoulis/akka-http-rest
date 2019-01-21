@@ -132,4 +132,14 @@ class BookPersistenceSQL(val dbAccess: DBAccess, val bookstorePersistence: Books
       case Failure(_) => Future.successful(Left(GenericDatabaseError))
     }
   }
+
+  def deleteAllBooks: Future[Either[DatabaseError, Boolean]] = {
+    db.run(Bookstores.delete).transformWith {
+      case Success(res) => res match {
+        case 0 => Future.successful(Right(false))
+        case 1 => Future.successful(Right(true))
+      }
+      case Failure(_) => Future.successful(Left(GenericDatabaseError))
+    }
+  }
 }

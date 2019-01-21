@@ -49,7 +49,7 @@ paths:
           description: unexpected error
           schema:
             $ref: '#/definitions/Error'
-            
+
     get:
       summary: List all orders for user.
       operationId: listOrders

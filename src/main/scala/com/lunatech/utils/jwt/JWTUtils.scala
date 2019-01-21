@@ -14,7 +14,6 @@ object JWTUtils {
   val secretKey = "super_secret_key"
   private val algorithm = JwtAlgorithm.HS256
   private val acceptedAlgorithms = Seq(algorithm)
-  //  private val accessTokenExpiration = 60 * 60 * 6
   private val accessTokenExpiration = 1
   private val refreshTokenExpiration = 60 * 60 * 6
 
@@ -81,26 +80,4 @@ object JWTUtils {
     case _ => Left(AuthenticationError())
   }
 
-  //  def extractUserId(refreshToken: String): String = {
-  //    val r: Try[String] = for {
-  //      (_, payload, _) <- decodeRefreshToken(refreshToken)
-  //      issuer <- JwtCirce.parseClaim(payload).issuer match {
-  //        case Some(value) => value
-  //      }
-  //    } yield issuer
-  //
-  //    r.toEither.right.get
-  //  }
-
-  //  val refresh: String = getRefreshToken(UUID.randomUUID())
-  //
-  //  val validate = validateRefreshToken(refresh)
-  //
-  //  val userId = decodeRefreshToken(refresh)
-  //
-  //  decodeRefreshToken(refresh).map {
-  //    case (_, b, _) =>
-  //      JwtCirce.parseClaim(b)
-  //      println(JwtCirce.parseClaim(b).issuer.get)
-  //  }
 }

@@ -26,7 +26,7 @@ trait OrderTableDef {
     def deliveryAddress: Rep[String] = column[String]("delivery_address")
 
     def comments: Rep[String] = column[String]("comments")
-    
+
     def * : ProvenShape[Order] = (
       id,
       orderId,
@@ -35,7 +35,7 @@ trait OrderTableDef {
       status,
       deliveryAddress,
       comments
-    ) <> (Order.tupled, Order.unapply)
+    ) <> ((Order.apply _).tupled, Order.unapply)
   }
 
 }

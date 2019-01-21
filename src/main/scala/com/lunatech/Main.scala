@@ -18,11 +18,6 @@ object Main extends App with Server {
 
     val routes: Route = Routes.buildRoutes(dependencies)
 
-    //    val userRegistryActor: ActorRef = system.actorOf(UserRegistryActor.props, "userRegistryActor")
-    //
-    //    lazy val routes: Route = userRoutes
-    //
-
     val serverBinding: Future[Http.ServerBinding] = Http().bindAndHandle(routes, configuration.serverConfig.host, configuration.serverConfig.port)
 
     serverBinding.onComplete {

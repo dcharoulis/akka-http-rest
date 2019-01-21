@@ -3,6 +3,8 @@ package com.lunatech.service.book
 import java.sql.Timestamp
 import java.util.UUID
 
+import scala.language.{higherKinds, implicitConversions}
+
 case class Book(id: Option[Int] = None, bookId: UUID, title: String, timestamp: Timestamp, genre: String, price: Double, quantity: Int)
 
 object Book {

@@ -11,3 +11,30 @@ case class Order(
                   deliveryAddress: String,
                   comments: String
                 )
+
+object Order {
+  def orderToOrderDto(order: Order): OrderDto = {
+    OrderDto(orderId = order.orderId, totalPrice = order.totalPrice,
+      status = order.status, deliveryAddress = order.deliveryAddress, comments = order.comments
+    )
+  }
+}
+
+case class OrderDto(orderId: UUID,
+                    totalPrice: Double,
+                    status: String,
+                    deliveryAddress: String,
+                    comments: String) {
+
+}
+
+
+case class OrderCreate(userId: UUID,
+                       totalPrice: Double,
+                       status: String,
+                       deliveryAddress: String,
+                       comments: String)
+
+
+
+

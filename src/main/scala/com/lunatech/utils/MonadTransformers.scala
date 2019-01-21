@@ -37,4 +37,5 @@ object MonadTransformers {
       t.map(_.flatMap(f))
 
   }
+
 }

@@ -9,11 +9,11 @@ import scala.concurrent.Future
 
 trait OrderService {
 
-  def getOrder(orderId: UUID): Future[Either[DatabaseError, Order]]
+  def getOrder(orderId: UUID): Future[Either[DatabaseError, OrderDto]]
 
-  def createOrder: Future[Either[DatabaseError, Order]]
+  def createOrder: Future[Either[DatabaseError, OrderDto]]
 
-  def cancelOrder: Future[Either[DatabaseError, Order]]
+  def cancelOrder: Future[Either[DatabaseError, Boolean]]
 
   def editOrder: Future[Either[DatabaseError, Order]]
 

@@ -42,6 +42,8 @@ object ServiceError {
 
   case class ViewIsNotDefined(view: String) extends ServiceError
 
+  case class InputValidationError(errors: List[String]) extends ServiceError
+
   val httpErrorMapper: PartialFunction[ServiceError, HttpError] = {
 
     case AuthenticationError() =>
@@ -79,6 +81,11 @@ object ServiceError {
       new UnauthorizedErrorHttp {
         override val code: String = "unableToRetrieveView"
         override val message: String = s"Unable to retrieve orders with view, $view"
+      }
+    case InputValidationError(errors) =>
+      new MalformedRequestErrorHttp("asd"){
+        override val code: String = "inputValidationError"
+        override val message: String = s"Input validation error, $errors"
       }
   }
 }

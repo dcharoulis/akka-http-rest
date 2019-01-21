@@ -15,17 +15,19 @@ lazy val circeVersion = "0.10.0"
 lazy val circeExtra = "1.22.0"
 lazy val h2Version = "1.3.148"
 lazy val catsVersion = "1.4.0"
+lazy val scalaCheck = "1.14.0"
 
 scalaVersion in ThisBuild := "2.12.7"
-scalaSource in Test := baseDirectory.value / "it"
 
-lazy val root = (project in file(".")).
-
-  settings(
+lazy val root = (project in file("."))
+  .configs(IntegrationTest)
+  .settings(
 
     version := "0.1",
 
     resolvers += Resolver.bintrayRepo("unisay", "maven"),
+
+    Defaults.itSettings,
 
     libraryDependencies ++=
       Seq(
@@ -33,12 +35,13 @@ lazy val root = (project in file(".")).
         "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
         "com.typesafe.akka" %% "akka-stream" % akkaVersion,
 
-        "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % Test,
-        "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
-        "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
+        "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion % "it,test",
+        "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "it,test",
+        "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % "it,test",
 
         // Scala Test
-        "org.scalatest" %% "scalatest" % scalaTestVersion % Test,
+        "org.scalatest" %% "scalatest" % scalaTestVersion % "it,test",
+        "org.scalacheck" %% "scalacheck" % scalaCheck,
 
         // JSON Serialization Library
         "io.circe" %% "circe-core" % circeVersion,
